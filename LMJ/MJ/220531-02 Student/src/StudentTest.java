@@ -11,12 +11,22 @@
 public class StudentTest {
 	public static void main(String[] args) {
 
-		Student student1 = new Student();
-		Student student2 = new Student();
-		Student student3 = new Student();
+//		Student student1 = new Student();
+//		Student student2 = new Student();
+//		Student student3 = new Student();
 
-		StudentClass one = new StudentClass(student1, student2, student3);
+		Student[] student = new Student[3];
+		for(int i = 0;i < student.length;i++) {
+			student[i] = new Student();
+		}
+		
+//		StudentClass one = new StudentClass(student1, student2, student3);
+		
+		StudentClass one = new StudentClass(student);
+		
+		one.manageArrayProgram();
 
-		one.manageProgram();
+
+	
 	}
 }
