@@ -29,11 +29,12 @@ public class Main4 {
 		
 		// 위의 리스트에서 5글자 문자열만 찾아서 지우기
 		
-//		for(String s: list) {
+//		for(String s: list) { foreach 문은 보는 용도 변경 하는 용도가 x
+//			System.out.println(s);
 //			if(s.length() == 5) {
 //				list.remove(s);
 //			}
-//		} 안됨		
-		
+//		} 		
+//		
 	}
 }

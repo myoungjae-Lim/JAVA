@@ -33,13 +33,15 @@ public class Main7 {
 		Random random = new Random();
 		
 		while(r.size() < 6) {
-			int ran = random.nextInt(10);
+			int ran = random.nextInt(11);
 			
 			if(!r.contains(ran)) {
 				r.add(ran);
 			}
+			
 		}
 		
 		System.out.println(r);
+		
 	}
 }
