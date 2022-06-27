@@ -42,12 +42,18 @@ public class Main5 extends JFrame {
 		resultPnl.add(resultLbl);
 		resultPnl.add(initBtn2);
 
+		JLabel logLbl = new JLabel("아이디");
+		JLabel passwordLbl = new JLabel("비밀번호");
 		JTextField tf = new JTextField(10);
 		JPasswordField pf = new JPasswordField(10);
 		JButton loginBtn = new JButton("로그인");
 		JButton signBtn = new JButton("가입");
 
 		SpringLayout sl_loginPnl = new SpringLayout();
+		sl_loginPnl.putConstraint(SpringLayout.WEST, passwordLbl, 0, SpringLayout.WEST, tf);
+		sl_loginPnl.putConstraint(SpringLayout.SOUTH, passwordLbl, -6, SpringLayout.NORTH, pf);
+		sl_loginPnl.putConstraint(SpringLayout.WEST, logLbl, 0, SpringLayout.WEST, tf);
+		sl_loginPnl.putConstraint(SpringLayout.SOUTH, logLbl, -6, SpringLayout.NORTH, tf);
 		sl_loginPnl.putConstraint(SpringLayout.NORTH, signBtn, -1, SpringLayout.NORTH, pf);
 		sl_loginPnl.putConstraint(SpringLayout.WEST, signBtn, 0, SpringLayout.WEST, loginBtn);
 		sl_loginPnl.putConstraint(SpringLayout.EAST, signBtn, 0, SpringLayout.EAST, loginBtn);
@@ -61,6 +67,8 @@ public class Main5 extends JFrame {
 
 		loginPnl.add(tf);
 		loginPnl.add(pf);
+		loginPnl.add(logLbl);
+		loginPnl.add(passwordLbl);
 		loginPnl.add(loginBtn);
 		loginPnl.add(signBtn);
 
