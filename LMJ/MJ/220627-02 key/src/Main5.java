@@ -91,6 +91,15 @@ public class Main5 extends JFrame {
 			}
 		});
 
+		pf.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					loginBtn.doClick();
+				}
+			}
+		});
+		
 		signBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -118,6 +127,15 @@ public class Main5 extends JFrame {
 		signPnl.add(pwCLbl);
 		signPnl.add(confirmID);
 
+		inputPWC.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					confirmBtn.doClick();
+				}
+			}
+		});
+		
 		inputID.addKeyListener(new KeyAdapter() {
 
 			@Override
@@ -147,7 +165,6 @@ public class Main5 extends JFrame {
 							inputPWC.setText("");
 							
 							JOptionPane.showMessageDialog(pnl, "회원 가입 완료 되었습니다.");
-							System.out.println(map);
 							layout.show(pnl, "Login");
 						} else {
 							JOptionPane.showMessageDialog(pnl, "비밀번호가 동일하지 않습니다.");
