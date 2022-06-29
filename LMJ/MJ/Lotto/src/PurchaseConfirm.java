@@ -2,36 +2,45 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class PurchaseConfirm extends JDialog {
+public class PurchaseConfirm extends JPanel {
+
+	private List<List<Integer>> list = new ArrayList<>();
+	private JLabel[] lbls;
 	private JPanel pnl;
-	private JLabel lbl;
-	private List<Set<Integer>> list = new ArrayList<>();
-	
-	public List<Set<Integer>> getList() {
+
+	public List<List<Integer>> getList() {
 		return list;
 	}
 
-	public void setList(List<Set<Integer>> list) {
-		System.out.println(list);
+	public void setList(List<List<Integer>> list) {
 		this.list = list;
+		System.out.println(this.list);
 	}
 
-	public PurchaseConfirm(JFrame owner) {
-		super(owner);
-		setTitle("구매 확인 창");
+	public PurchaseConfirm() {
+		lbls = new JLabel[5];
+		JLabel lbl = new JLabel("안녕");
+		BoxLayout box = new BoxLayout(pnl, BoxLayout.Y_AXIS);
 		
-		pnl = new JPanel();
-		lbl = new JLabel("새창");
+//		setLbl();
+		for (int i = 0; i < list.size(); i++) {
+			lbls[i] = new JLabel(String.valueOf(list.get(i)));
+			pnl.add(lbls[i]);
+		}
 		
-		
-		pnl.add(lbl);
-		add(pnl);
+		add(lbl);
+//		System.out.println(list);
 		setSize(500, 500);
 //		setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+	
+	public void setLbl() {
+		System.out.println(list);
 	}
 }
