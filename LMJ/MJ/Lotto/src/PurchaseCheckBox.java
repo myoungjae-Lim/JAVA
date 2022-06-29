@@ -54,13 +54,13 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 		JRadioButton mixRB = new JRadioButton("혼합");
 		JRadioButton autoRB = new JRadioButton("자동");
 		ButtonGroup group = new ButtonGroup();
-		
+
 		group.add(menualRB);
 		group.add(autoRB);
 		group.add(mixRB);
-		
+
 		menualRB.setSelected(true);
-		
+
 		menualRB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -69,7 +69,7 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 				set.removeAll(set);
 			}
 		});
-		
+
 		mixRB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -78,7 +78,7 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 				set.removeAll(set);
 			}
 		});
-		
+
 		autoRB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -87,7 +87,7 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 				set.removeAll(set);
 			}
 		});
-		
+
 //		JButton menualBtn = new JButton("혼합");
 //		JButton autoBtn = new JButton("자동");
 //
@@ -169,31 +169,20 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 					JOptionPane.showMessageDialog(purchasePnl, "복권은 한번에 5장까지 구매 가능합니다.");
 				} else {
 					if (mixRB.isSelected()) {
-						if (set.size() < 6) {
 
-							while (set.size() < 6) {
-								set.add(new Random().nextInt(45) + 1);
-							}
-
-							List<Integer> list = new ArrayList<Integer>(set);
-							Collections.sort(list);
-							lottoList.add(list);
-
-							checkboxAllInit();
-
-							set.removeAll(set); // set을 초기화
-
-						} else {
-
-							List<Integer> list = new ArrayList<Integer>(set);
-							Collections.sort(list);
-							lottoList.add(list);
-
-							checkboxAllInit();
-
-							set.removeAll(set); // set을 초기화
+						while (set.size() < 6) {
+							set.add(new Random().nextInt(45) + 1);
 						}
-					} else if(menualRB.isSelected()) {
+
+						List<Integer> list = new ArrayList<Integer>(set);
+						Collections.sort(list);
+						lottoList.add(list);
+
+						checkboxAllInit();
+
+						set.removeAll(set); // set을 초기화
+
+					} else if (menualRB.isSelected()) {
 						if (set.size() == 6) {
 							List<Integer> list = new ArrayList<Integer>(set);
 							Collections.sort(list);
@@ -202,7 +191,7 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 							set.removeAll(set);
 						} else {
 							JOptionPane.showMessageDialog(purchasePnl, "번호 6개를 선택해 주세요");
-							
+
 						}
 					} else {
 						while (set.size() < 6) {
@@ -227,7 +216,11 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 							lbl[i][j + 1].setText(String.format("%02d", lottoList.get(i).get(j)));
 						}
 					}
-					checkboxAllTrue();
+					if (autoRB.isSelected()) {
+						checkboxAllFalse();
+					} else {
+						checkboxAllTrue();
+					}
 				}
 			}
 		});
@@ -235,7 +228,7 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 		leftPnl.add(menualRB);
 		leftPnl.add(mixRB);
 		leftPnl.add(autoRB);
-		
+
 //		leftPnl.add(menualBtn);
 //		leftPnl.add(autoBtn);
 
@@ -249,7 +242,7 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 		allPnl.add(confirmPnl);
 
 		getContentPane().add(allPnl);
-		setSize(1000, 1000);
+		setSize(1000, 300);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
