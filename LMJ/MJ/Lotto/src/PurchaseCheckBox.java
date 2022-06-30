@@ -1,6 +1,8 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,15 +14,22 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import org.w3c.dom.events.MouseEvent;
+
 public class PurchaseCheckBox extends JFrame implements ActionListener {
 	private JCheckBox[] cbs;
 	private Set<Integer> set = new HashSet<>();
+	private Consumer consumer = new Consumer();
+	private JButton[] confirmRetouchBtns;
+	private Integer index = 0;
+	private boolean retouchTrue = false;
 
 	public PurchaseCheckBox() {
 		super("구매");
@@ -35,6 +44,8 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 		JPanel bPnl = new JPanel();
 
 		JPanel confirmPnl = new JPanel();
+
+		JPanel rightPnl = new JPanel();
 
 //		배치관리자 설정 부분
 // --------------------------------------------------------------------------------
@@ -107,11 +118,55 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 
 // --------------------------------------------------------------------------------		
 
-//			구매 확인 panel 구성 부분
-//--------------------------------------------------------------------------------
+//		중간 panel (체크박스 부분)
+// --------------------------------------------------------------------------------
 
-		JLabel purchaseConfrimLbl = new JLabel("구매 확인");
-		confirmPnl.add(purchaseConfrimLbl);
+//		JCheckBox autoCb = new JCheckBox("자동 선택");
+		JButton initBtn = new JButton("초기화");
+		JButton purchaseBtn = new JButton("구매");
+		Integer[] purchaseCount = { 1, 2, 3, 4, 5 };
+		JComboBox<Integer> purchaseCombo = new JComboBox<>(purchaseCount);
+		JLabel priceLbl = new JLabel("지불 예정 금액: " + 1000 + "원");
+
+		GridLayout grid = new GridLayout(5, 9); // 체크박스 배열 해놓은것
+
+		checkboxPnl.setLayout((grid));
+		cbs = new JCheckBox[45];
+
+		for (int i = 0; i < cbs.length; i++) { // 체크박스 값 입력
+			cbs[i] = new JCheckBox(String.valueOf(i + 1));
+			cbs[i].addActionListener(this);
+			checkboxPnl.add(cbs[i]);
+		}
+
+		initBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkboxAllInit();
+				set.removeAll(set);
+			}
+		});
+
+		purchaseCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int p = (purchaseCombo.getSelectedIndex() + 1) * 1000;
+				priceLbl.setText("지불 예정 금액: " + p + "원");
+			}
+		});
+// --------------------------------------------------------------------------------
+
+//		구매 확인 panel 구성 부분
+//--------------------------------------------------------------------------------
+		JButton confirmBtn = new JButton("구매 확정");
+		JLabel purchaseConfirmLbl = new JLabel("구매 확인");
+		JPanel confirmTopPnl = new JPanel();
+		JPanel confirmBottomPnl = new JPanel();
+		JButton confirmInitBtn = new JButton("초기화");
+
+		confirmTopPnl.add(purchaseConfirmLbl);
+		confirmTopPnl.add(confirmInitBtn);
+		confirmPnl.add(confirmTopPnl);
 
 		JPanel[] lottoPnl = new JPanel[5];
 
@@ -121,8 +176,13 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 			confirmPnl.add(lottoPnl[i]);
 		}
 
-		JLabel countPurchaseLbl = new JLabel("횟수 나타 낼거임");
-		confirmPnl.add(countPurchaseLbl);
+		confirmRetouchBtns = new JButton[5];
+
+		JLabel countPurchaseLbl = new JLabel("총 구매 횟수: 0");
+		JLabel confirmPrice = new JLabel("금액: " + String.valueOf(consumer.getPrice()) + "원");
+
+		confirmBottomPnl.add(countPurchaseLbl);
+		confirmBottomPnl.add(confirmPrice);
 
 		JLabel[][] lbl = new JLabel[5][7];
 
@@ -141,89 +201,199 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 			}
 
 		}
-// --------------------------------------------------------------------------------
 
-//			체크박스 부분
-// --------------------------------------------------------------------------------
-		JButton btn = new JButton("구매");
-//		JCheckBox autoCb = new JCheckBox("자동 선택");
-
-		GridLayout grid = new GridLayout(5, 9); // 체크박스 배열 해놓은것
-
-		checkboxPnl.setLayout((grid));
-		cbs = new JCheckBox[45];
-
-		for (int i = 0; i < cbs.length; i++) { // 체크박스 값 입력
-			cbs[i] = new JCheckBox(String.valueOf(i + 1));
-			cbs[i].addActionListener(this);
-			checkboxPnl.add(cbs[i]);
+		// 수정 버튼 생성
+		for (int i = 0; i < confirmRetouchBtns.length; i++) {
+			confirmRetouchBtns[i] = new JButton("수정");
+			lottoPnl[i].add(confirmRetouchBtns[i]);
 		}
-// --------------------------------------------------------------------------------
+
+		// 구매 번호 초기화 버튼
+		confirmInitBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int price = -(1000 * lottoList.size());
+				consumer.setPrice(price);
+				confirmPrice.setText("금액: " + String.valueOf(consumer.getPrice()) + "원");
+				for (int i = 0; i < lbl.length; i++) {
+					for (int j = 1; j < lbl[i].length; j++) {
+						lbl[i][j].setText("");
+					}
+				}
+				lottoList.removeAll(lottoList);
+			}
+		});
+
+		// 구매 확정 버튼 이벤트
+		confirmBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				consumer.setLottoList(lottoList);
+				System.out.println(consumer.getList());
+				lottoList.removeAll(lottoList);
+				countPurchaseLbl.setText("총 구매 횟수: " + String.valueOf(String.valueOf(consumer.getCount()) + "회"));
+				for (int i = 0; i < lbl.length; i++) {
+					for (int j = 1; j < lbl[i].length; j++) {
+						lbl[i][j].setText("");
+					}
+				}
+				lottoList.removeAll(lottoList);
+			}
+		});
+
+		// 수정 버튼 이벤트
+		ActionListener listener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				for (int i = 0; i < confirmRetouchBtns.length; i++) {
+					if (e.getSource() == confirmRetouchBtns[i]) {
+
+						retouchTrue = true;
+						menualRB.setSelected(true);
+						set.removeAll(set);
+
+						checkboxAllFalse();
+						checkboxAllInit();
+
+//						System.out.println(lottoList.get(i));
+
+						for (int j = 0; j < lottoList.get(i).size(); j++) {
+							set.add(lottoList.get(i).get(j));
+							cbs[lottoList.get(i).get(j) - 1].setEnabled(true);
+							cbs[lottoList.get(i).get(j) - 1].setSelected(true);
+						}
+
+//						System.out.println(set);
+
+						index = i;
+					}
+
+				}
+
+			}
+		};
+
+		for (int i = 0; i < confirmRetouchBtns.length; i++) {
+			confirmRetouchBtns[i].addActionListener(listener);
+		}
+//--------------------------------------------------------------------------------
 
 //			구매 버튼 클릭 이벤트
 // --------------------------------------------------------------------------------
-		btn.addActionListener(new ActionListener() {
+		purchaseBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (lottoList.size() == 5) { // 5장 넘게 구매X
-					JOptionPane.showMessageDialog(purchasePnl, "복권은 한번에 5장까지 구매 가능합니다.");
+				if (retouchTrue) { // 수정 버튼을 누른 상태일때
+
+					lottoList.remove(index); // index에 해당하는 배열을 지운다.
+					List<Integer> list = new ArrayList<Integer>(set); // 새로 수정한 lotto set을 list로 만든다. 
+					Collections.sort(list);	 // 정렬 
+					lottoList.add(index, list); // 삭제한 index에 정렬한 list를 추가한다. 
+
+					checkboxAllInit(); // checkbox를 모두 초기화 시킨다. 
+					checkboxAllTrue(); // checkbox를 모두 활성화 시킨다.
+					set.removeAll(set); // set을 지워준다.
+
+					for (int j = 0; j < lottoList.get(index).size(); j++) {
+						lbl[index][j + 1].setText(String.format("%02d", lottoList.get(index).get(j)));
+					}
+
+					retouchTrue = false; // 다시 수정 버튼을 누르기 전으로 돌아간다. 
+
 				} else {
-					if (mixRB.isSelected()) {
+					if (lottoList.size() + purchaseCombo.getSelectedIndex() + 1 > 5) { // 5장 넘게 구매X
+						JOptionPane.showMessageDialog(purchasePnl, "복권은 한번에 5장까지 구매 가능합니다.");
 
-						while (set.size() < 6) {
-							set.add(new Random().nextInt(45) + 1);
-						}
-
-						List<Integer> list = new ArrayList<Integer>(set);
-						Collections.sort(list);
-						lottoList.add(list);
-
-						checkboxAllInit();
-
-						set.removeAll(set); // set을 초기화
-
-					} else if (menualRB.isSelected()) {
-						if (set.size() == 6) {
-							List<Integer> list = new ArrayList<Integer>(set);
-							Collections.sort(list);
-							lottoList.add(list);
-							checkboxAllInit();
-							set.removeAll(set);
-						} else {
-							JOptionPane.showMessageDialog(purchasePnl, "번호 6개를 선택해 주세요");
-
-						}
 					} else {
-						while (set.size() < 6) {
-							set.add(new Random().nextInt(45) + 1);
+						if (mixRB.isSelected()) {
+							System.out.println(set);
+							Integer[] arr = new Integer[set.size()];
+							System.out.println(arr.length);
+							int countArr = 0;
+
+							for (Integer number : set) {
+								arr[countArr] = number;
+								countArr++;
+							}
+
+							for (int i = 0; i < purchaseCombo.getSelectedIndex() + 1; i++) {
+								for (int j = 0; j < arr.length; j++) {
+									set.add(arr[j]);
+								}
+								while (set.size() < 6) {
+									set.add(new Random().nextInt(45) + 1);
+								}
+
+								List<Integer> list = new ArrayList<Integer>(set);
+								Collections.sort(list);
+
+								lottoList.add(list);
+
+								checkboxAllInit();
+
+								set.removeAll(set); // set을 초기화
+							}
+
+						} else if (menualRB.isSelected()) {
+							if (set.size() == 6) {
+								List<Integer> list = new ArrayList<Integer>(set);
+								Collections.sort(list);
+
+								for (int i = 0; i < purchaseCombo.getSelectedIndex() + 1; i++) {
+									lottoList.add(list);
+
+								}
+
+								checkboxAllInit();
+								set.removeAll(set);
+							} else {
+								JOptionPane.showMessageDialog(purchasePnl, "번호 6개를 선택해 주세요");
+
+							}
+						} else {
+							for (int i = 0; i < purchaseCombo.getSelectedIndex() + 1; i++) {
+								while (set.size() < 6) {
+									set.add(new Random().nextInt(45) + 1);
+								}
+
+								List<Integer> list = new ArrayList<Integer>(set);
+								Collections.sort(list);
+
+								lottoList.add(list);
+
+								checkboxAllInit();
+
+								set.removeAll(set); // set을 초기화
+							}
 						}
-
-						List<Integer> list = new ArrayList<Integer>(set);
-						Collections.sort(list);
-						lottoList.add(list);
-
-						checkboxAllInit();
-
-						set.removeAll(set); // set을 초기화
+						// 구매 확인창에 번호를 보내줌
+						for (int i = 0; i < lottoList.size(); i++) {
+							for (int j = 0; j < lottoList.get(i).size(); j++) {
+								lbl[i][j + 1].setText(String.format("%02d", lottoList.get(i).get(j)));
+							}
+						}
+						if (autoRB.isSelected()) {
+							checkboxAllFalse();
+						} else {
+							checkboxAllTrue();
+						}
+						consumer.setPrice((purchaseCombo.getSelectedIndex() + 1) * 1000);
+						confirmPrice.setText("총 금액: " + consumer.getPrice() + "원");
+						purchaseCombo.setSelectedIndex(0);
 					}
 
 //					System.out.println(lottoList);
 //					System.out.println(lottoList.size());
 
-					// 구매 확인창에 번호를 보내줌
-					for (int i = 0; i < lottoList.size(); i++) {
-						for (int j = 0; j < lottoList.get(i).size(); j++) {
-							lbl[i][j + 1].setText(String.format("%02d", lottoList.get(i).get(j)));
-						}
-					}
-					if (autoRB.isSelected()) {
-						checkboxAllFalse();
-					} else {
-						checkboxAllTrue();
-					}
 				}
 			}
 		});
+// --------------------------------------------------------------------------------
+
+//		right패널
+// --------------------------------------------------------------------------------
+
 // --------------------------------------------------------------------------------
 		leftPnl.add(menualRB);
 		leftPnl.add(mixRB);
@@ -232,17 +402,25 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 //		leftPnl.add(menualBtn);
 //		leftPnl.add(autoBtn);
 
-		bPnl.add(btn);
+		bPnl.add(initBtn);
+		bPnl.add(purchaseBtn);
+		bPnl.add(purchaseCombo);
 //		bPnl.add(autoCb);
+
+		purchasePnl.add(priceLbl);
 		purchasePnl.add(checkboxPnl);
 		purchasePnl.add(bPnl);
+
+		confirmPnl.add(confirmBottomPnl);
+		confirmPnl.add(confirmBtn);
 
 		allPnl.add(leftPnl);
 		allPnl.add(purchasePnl);
 		allPnl.add(confirmPnl);
+		allPnl.add(rightPnl);
 
 		getContentPane().add(allPnl);
-		setSize(1000, 300);
+		setSize(1000, 500);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
