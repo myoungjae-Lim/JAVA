@@ -44,3 +44,4 @@ public class PurchaseConfirm extends JPanel {
 		System.out.println(list);
 	}
 }
+// dialog 통신  https://godtory.tistory.com/38
