@@ -22,7 +22,7 @@ import javax.swing.JRadioButton;
 public class PurchaseCheckBox extends JFrame implements ActionListener {
 	private JCheckBox[] cbs;
 	private Set<Integer> set = new HashSet<>();
-	private Consumer consumer = new Consumer();
+	private Consumer consumer;
 	private JButton[] confirmRetouchBtns;
 	private Integer index = 0;
 	private boolean retouchTrue = false;
@@ -32,8 +32,18 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 	private List<Integer> copyList;
 	private JButton[] confirmPasteBtns;
 
+	public Consumer getConsumer() {
+		System.out.println(consumer.getList());
+		return consumer;
+	}
+
+	public void setConsumer(Consumer consumer) {
+		this.consumer = consumer;
+	}
+
 	public PurchaseCheckBox() {
 		super("구매");
+		consumer = new Consumer(); 
 		List<List<Integer>> lottoList = new ArrayList<>();
 
 		JPanel allPnl = new JPanel();
@@ -217,9 +227,6 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 			lottoPnl[i].add(confirmRemoveBtns[i]);
 			lottoPnl[i].add(confirmCopyBtns[i]);
 			lottoPnl[i].add(confirmPasteBtns[i]);
-			confirmRetouchBtns[i].setEnabled(false);
-			confirmRemoveBtns[i].setEnabled(false);
-			confirmCopyBtns[i].setEnabled(false);
 			confirmPasteBtns[i].setVisible(false);
 		}
 
@@ -236,7 +243,6 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 					}
 				}
 				lottoList.removeAll(lottoList);
-				confirmBtnFalse();
 				copyBtnInit();
 			}
 		});
@@ -254,8 +260,9 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 						confirmLbls[i][j].setText("");
 					}
 				}
+				
 				lottoList.removeAll(lottoList);
-				confirmBtnFalse();
+				System.out.println("dsada" + consumer.getLottoList());
 				copyBtnInit();
 			}
 		});
@@ -301,20 +308,14 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 
 				for (int i = 0; i < confirmRemoveBtns.length; i++) {
 					if (e.getSource() == confirmRemoveBtns[i]) {
-						confirmRetouchBtns[lottoList.size() - 1].setEnabled(false);
-						confirmRemoveBtns[lottoList.size() - 1].setEnabled(false);
-						confirmCopyBtns[lottoList.size() - 1].setEnabled(false);
-			
 						lottoList.remove(i);
-						System.out.println(lottoList);
+//						System.out.println(lottoList);
 						confirmLblInit();
-						
 						for (int j = 0; j < lottoList.size(); j++) {
 							for (int k = 0; k < lottoList.get(j).size(); k++) {
 								confirmLbls[j][k + 1].setText(String.format("%02d", lottoList.get(j).get(k)));
 							}
 						}
-						
 						consumer.setPrice(-1000);
 						confirmPrice.setText("총 금액: " + consumer.getPrice() + "원");
 						copyBtnInit();
@@ -333,15 +334,16 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 
 						System.out.println(copyList);
 
-						confirmCopyBtns[lottoList.size()].setVisible(false);
-						confirmPasteBtns[lottoList.size()].setVisible(true);
-
+						for (int j = lottoList.size(); j < 5; j++) {
+							confirmCopyBtns[j].setVisible(false);
+							confirmPasteBtns[j].setVisible(true);
+						}
 					}
 				}
 			}
 		};
 
-		// 붙여넣기 버튼 이벤트
+		// 붙여넣기 버튼 이벤트 
 		ActionListener pasteListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -349,14 +351,11 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 					if (e.getSource() == confirmPasteBtns[i]) {
 						lottoList.add(copyList);
 						System.out.println(lottoList);
-						for (int j = 0; j < copyList.size(); j++) {
+						for(int j = 0;j < copyList.size();j++) {
 							confirmLbls[i][j + 1].setText(String.format("%02d", copyList.get(j)));
 						}
-						consumer.setPrice(1000);
+						consumer.setPrice(1000);						
 						confirmPrice.setText("총 금액: " + consumer.getPrice() + "원");
-						confirmRetouchBtns[lottoList.size() - 1].setEnabled(true);
-						confirmRemoveBtns[lottoList.size() - 1].setEnabled(true);
-						confirmCopyBtns[lottoList.size() - 1].setEnabled(true);
 						copyBtnInit();
 					}
 				}
@@ -469,9 +468,6 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 						}
 						// 구매 확인창에 번호를 보내줌
 						for (int i = 0; i < lottoList.size(); i++) {
-							confirmRetouchBtns[i].setEnabled(true);
-							confirmRemoveBtns[i].setEnabled(true);
-							confirmCopyBtns[i].setEnabled(true);
 							for (int j = 0; j < lottoList.get(i).size(); j++) {
 								confirmLbls[i][j + 1].setText(String.format("%02d", lottoList.get(i).get(j)));
 							}
@@ -493,6 +489,9 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 				}
 			}
 		});
+// --------------------------------------------------------------------------------
+
+//		right패널
 // --------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------
@@ -522,7 +521,7 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 
 		getContentPane().add(allPnl);
 		setSize(1000, 500);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	public static void main(String[] args) {
@@ -564,15 +563,6 @@ public class PurchaseCheckBox extends JFrame implements ActionListener {
 		for (int i = 0; i < confirmCopyBtns.length; i++) {
 			confirmPasteBtns[i].setVisible(false);
 			confirmCopyBtns[i].setVisible(true);
-		}
-	}
-	
-	
-	public void confirmBtnFalse() {
-		for(int i = 0; i < confirmRetouchBtns.length;i++) {
-			confirmRetouchBtns[i].setEnabled(false);
-			confirmRemoveBtns[i].setEnabled(false);
-			confirmCopyBtns[i].setEnabled(false);
 		}
 	}
 
