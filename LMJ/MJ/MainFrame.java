@@ -16,12 +16,17 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JButton historyBtn;
 	private JButton checkBtn;
 	private BuyFrame buyFrame;
+	private LotteryFrame lotteryFrame;
+	private HistoryFrame historyFrame;
 	private Consumer consumer = new Consumer();
 
+	
 	public MainFrame() {
 		super("로또 추첨");
 		buyFrame = new BuyFrame();
-
+		lotteryFrame = new LotteryFrame();
+		historyFrame = new HistoryFrame();
+		
 		setSize(1000, 600);
 		setResizable(false);
 		setLocationRelativeTo(null);
@@ -110,14 +115,22 @@ public class MainFrame extends JFrame implements ActionListener {
 		Object click = e.getSource();
 		if (click == buyBtn) {
 //			ToDo : 구매하기 버튼을 누르면 구매하기 창으로 이동
+			buyFrame.allInit();
 			buyFrame.setVisible(true);
+//			System.out.println(lotteryFrame.getConsumer().getLottoList());
 			
 		} else if (click == lotteryBtn) {
 //			ToDo : 번호추첨 버튼을 누르면 번호추첨 창으로 이동
-			consumer = buyFrame.getConsumer(); // 저장된 값 불러오기 
-			System.out.println(consumer.getList());
+			consumer = buyFrame.getConsumer();
+//			lotteryFrame.setConsumer(consumer);
+			lotteryFrame = new LotteryFrame(consumer);
+			lotteryFrame.setVisible(true);
 		} else if (click == historyBtn) {
 //			ToDo : 역대당첨번호 버튼을 누르면 역대당첨번호 창으로 이동
+			historyFrame.setCurrentLotto(lotteryFrame.getLottoList());
+			historyFrame.setCurrentBonus(lotteryFrame.getBonusNumber());
+//			System.out.println(lotteryFrame.getLottoList());
+			historyFrame.setVisible(true);
 
 		} else if (click == checkBtn) {
 //			ToDo : 당첨확인 버튼을 누르면 당첨확인 창으로 이동
