@@ -39,7 +39,7 @@ public class BuyFrame extends JFrame implements ActionListener {
 	private boolean changeTrue = false;
 	private int index = 0;
 	private List<Integer> copyList;
-	private URL defaultBallImg = BuyFrame.class.getClassLoader().getResource("resources/buyDefault.png");
+	private URL defaultBallImg = BuyFrame.class.getClassLoader().getResource("buyDefault.png");
 	private ImageIcon defaultBall = new ImageIcon(defaultBallImg);
 	private JLabel rightBottomTextLbl;
 	private JButton rightBuyBtn;
@@ -61,7 +61,6 @@ public class BuyFrame extends JFrame implements ActionListener {
 	public BuyFrame() {
 		super("로또 구매");
 		lottoList = new ArrayList<>();
-		System.out.println(lottoList);
 		setSize(1000, 600);
 		setBackground(Color.white);
 		setResizable(false);
@@ -75,14 +74,14 @@ public class BuyFrame extends JFrame implements ActionListener {
 
 		JButton homeBtn = new JButton();
 		homeBtn.setBounds(30, 15, 50, 50);
-		URL homeBtnUrl = BuyFrame.class.getClassLoader().getResource("resources/homeBlack.png");
+		URL homeBtnUrl = BuyFrame.class.getClassLoader().getResource("homeBlack.png");
 		homeBtn.setIcon(new ImageIcon(homeBtnUrl));
 		homeBtn.setBorderPainted(false);
 		wrapPnl.add(homeBtn);
 
 		JLabel titleImgLbl = new JLabel();
 		titleImgLbl.setBounds(0, 0, 1000, 75);
-		URL titleImgUrl = BuyFrame.class.getClassLoader().getResource("resources/buyTitle.png");
+		URL titleImgUrl = BuyFrame.class.getClassLoader().getResource("buyTitle.png");
 		titleImgLbl.setIcon(new ImageIcon(titleImgUrl));
 		wrapPnl.add(titleImgLbl);
 
@@ -106,26 +105,26 @@ public class BuyFrame extends JFrame implements ActionListener {
 
 		manualRBtn = new JRadioButton();
 		manualRBtn.setBounds(45, 115, 138, 136);
-		URL manualUrl = BuyFrame.class.getClassLoader().getResource("resources/buyButton_01.png");
+		URL manualUrl = BuyFrame.class.getClassLoader().getResource("buyButton_01.png");
 		manualRBtn.setIcon(new ImageIcon(manualUrl));
-		URL manualSUrl = BuyFrame.class.getClassLoader().getResource("resources/selectedBuyButton_01.png");
+		URL manualSUrl = BuyFrame.class.getClassLoader().getResource("selectedBuyButton_01.png");
 		manualRBtn.setSelectedIcon(new ImageIcon(manualSUrl));
 		manualRBtn.setSelected(true);
 		wrapPnl.add(manualRBtn);
 
 		semiAutoRBtn = new JRadioButton();
 		semiAutoRBtn.setBounds(45, 263, 138, 136);
-		URL semiAutoUrl = BuyFrame.class.getClassLoader().getResource("resources/buyButton_02.png");
+		URL semiAutoUrl = BuyFrame.class.getClassLoader().getResource("buyButton_02.png");
 		semiAutoRBtn.setIcon(new ImageIcon(semiAutoUrl));
-		URL semiAutoSUrl = BuyFrame.class.getClassLoader().getResource("resources/selectedBuyButton_02.png");
+		URL semiAutoSUrl = BuyFrame.class.getClassLoader().getResource("selectedBuyButton_02.png");
 		semiAutoRBtn.setSelectedIcon(new ImageIcon(semiAutoSUrl));
 		wrapPnl.add(semiAutoRBtn);
 
 		autoRBtn = new JRadioButton();
 		autoRBtn.setBounds(45, 411, 138, 136);
-		URL autoUrl = BuyFrame.class.getClassLoader().getResource("resources/buyButton_03.png");
+		URL autoUrl = BuyFrame.class.getClassLoader().getResource("buyButton_03.png");
 		autoRBtn.setIcon(new ImageIcon(autoUrl));
-		URL autoSUrl = BuyFrame.class.getClassLoader().getResource("resources/selectedBuyButton_03.png");
+		URL autoSUrl = BuyFrame.class.getClassLoader().getResource("selectedBuyButton_03.png");
 		autoRBtn.setSelectedIcon(new ImageIcon(autoSUrl));
 
 		wrapPnl.add(autoRBtn);
@@ -172,14 +171,14 @@ public class BuyFrame extends JFrame implements ActionListener {
 		// 왼쪽 확인 버튼
 		JButton leftCheckBtn = new JButton();
 		leftCheckBtn.setBounds(223, 522, 90, 30);
-		URL leftCheckUrl = BuyFrame.class.getClassLoader().getResource("resources/buyButton_04.png");
+		URL leftCheckUrl = BuyFrame.class.getClassLoader().getResource("buyButton_04.png");
 		leftCheckBtn.setIcon(new ImageIcon(leftCheckUrl));
 		wrapPnl.add(leftCheckBtn);
 
 		// 왼쪽 번호 초기화 버튼
 		JButton leftResetBtn = new JButton();
 		leftResetBtn.setBounds(373, 522, 90, 30);
-		URL leftResetUrl = BuyFrame.class.getClassLoader().getResource("resources/buyButton_05.png");
+		URL leftResetUrl = BuyFrame.class.getClassLoader().getResource("buyButton_05.png");
 		leftResetBtn.setIcon(new ImageIcon(leftResetUrl));
 		wrapPnl.add(leftResetBtn);
 
@@ -220,7 +219,7 @@ public class BuyFrame extends JFrame implements ActionListener {
 		// 배경화면 image 적용
 		JLabel mainBgLbl = new JLabel();
 		mainBgLbl.setBounds(0, 0, 995, 580);
-		URL url = BuyFrame.class.getClassLoader().getResource("resources/back_01.png");
+		URL url = BuyFrame.class.getClassLoader().getResource("back_01.png");
 		mainBgLbl.setIcon(new ImageIcon(url));
 		wrapPnl.add(mainBgLbl);
 //		-----------------------------------------------------------------------------------------
@@ -262,7 +261,7 @@ public class BuyFrame extends JFrame implements ActionListener {
 
 		rightResetBtn = new JButton();
 		rightResetBtn.setBounds(390, 15, 60, 30);
-		URL rightResetUrl = BuyFrame.class.getClassLoader().getResource("resources/buyButton_06.png");
+		URL rightResetUrl = BuyFrame.class.getClassLoader().getResource("buyButton_06.png");
 		rightResetBtn.setIcon(new ImageIcon(rightResetUrl));
 		rightPnl.add(rightResetBtn);
 
@@ -388,6 +387,7 @@ public class BuyFrame extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i < deleteBtn.length; i++) {
+
 					if (e.getSource() == deleteBtn[i]) {
 						changeBtn[lottoList.size() - 1].setEnabled(false);
 						deleteBtn[lottoList.size() - 1].setEnabled(false);
@@ -398,6 +398,7 @@ public class BuyFrame extends JFrame implements ActionListener {
 							for (int k = 0; k < lottoList.get(j).size(); k++) {
 								rightLbl[j][k + 1].setIcon(new ImageIcon(getColorNumber(lottoList.get(j).get(k) - 1))); // new
 							}
+							copyBtn[j].setEnabled(true);
 						}
 						consumer.setPrice(-1000);
 						rightBottomTextLbl.setText(
@@ -455,7 +456,7 @@ public class BuyFrame extends JFrame implements ActionListener {
 
 		rightBuyBtn = new JButton();
 		rightBuyBtn.setBounds(340, 390, 120, 50);
-		URL rightBuyUrl = BuyFrame.class.getClassLoader().getResource("resources/buyButton_07.png");
+		URL rightBuyUrl = BuyFrame.class.getClassLoader().getResource("buyButton_07.png");
 		rightBuyBtn.setIcon(new ImageIcon(rightBuyUrl));
 		rightPnl.add(rightBuyBtn);
 
@@ -566,10 +567,18 @@ public class BuyFrame extends JFrame implements ActionListener {
 							consumer.setPrice((purchaseCombo.getSelectedIndex() + 1) * 1000);
 						}
 						// 구매 확인창에 번호를 보내줌
+						if (lottoList.size() == 5) {
+							for (int i = 0; i < copyBtn.length; i++) {
+								copyBtn[i].setEnabled(false);
+							}
+						} else {
+							for (int i = 0; i < lottoList.size(); i++) {
+								copyBtn[i].setEnabled(true);
+							}
+						}
 						for (int i = 0; i < lottoList.size(); i++) {
 							changeBtn[i].setEnabled(true);
 							deleteBtn[i].setEnabled(true);
-							copyBtn[i].setEnabled(true);
 							for (int j = 0; j < lottoList.get(i).size(); j++) {
 								rightLbl[i][j + 1].setIcon(new ImageIcon(getColorNumber(lottoList.get(i).get(j) - 1)));
 							}
@@ -668,12 +677,12 @@ public class BuyFrame extends JFrame implements ActionListener {
 	}
 
 	public URL getBlackNumber(int i) {
-		URL url = BuyFrame.class.getClassLoader().getResource("resources/NumberBlack/" + (i + 1) + ".png");
+		URL url = BuyFrame.class.getClassLoader().getResource("NumberBlack/" + (i + 1) + ".png");
 		return url;
 	}
 
 	public URL getColorNumber(int i) {
-		URL url = BuyFrame.class.getClassLoader().getResource("resources/NumberColor/" + (i + 1) + ".png");
+		URL url = BuyFrame.class.getClassLoader().getResource("NumberColor/" + (i + 1) + ".png");
 		return url;
 	}
 
@@ -685,7 +694,6 @@ public class BuyFrame extends JFrame implements ActionListener {
 				if (numberBox[i].isSelected()) {
 					numberBox[i].setIcon(new ImageIcon(getColorNumber(i)));
 					lottoSet.add(i + 1);
-//					System.out.println(lottoSet);
 				} else {
 					numberBox[i].setIcon(new ImageIcon(getBlackNumber(i)));
 					lottoSet.remove(i + 1);

@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,8 +31,22 @@ public class HistoryFrame extends JFrame {
 	private List<Integer> currentLotto = new ArrayList<>();
 	private Integer currentBonus = 0;
 	private List<Integer> bonus = new ArrayList<>();
-	private URL defaultBallImg = BuyFrame.class.getClassLoader().getResource("resources/buyDefault.png");
+	private URL defaultBallImg = BuyFrame.class.getClassLoader().getResource("buyDefault.png");
 	private ImageIcon defaultBall = new ImageIcon(defaultBallImg);
+	private JPanel subPnl;
+	private CardLayout card;
+	private JPanel[] cardPnls;
+	private JPanel wrapPnl;
+	private int paintCount = 0;
+	private int currentIndex = 0;
+
+	public List<List<Integer>> getLottoList() {
+		return lottoList;
+	}
+
+	public void setLottoList(List<List<Integer>> lottoList) {
+		this.lottoList = lottoList;
+	}
 
 	public List<Integer> getCurrentLotto() {
 		return currentLotto;
@@ -39,12 +54,7 @@ public class HistoryFrame extends JFrame {
 
 	public void setCurrentLotto(List<Integer> currentLotto) {
 		this.currentLotto = currentLotto;
-		System.out.println(this.currentLotto);
 		lottoList.add(currentLotto);
-		for (int j = 0; j < 6; j++) {
-			basicBall[(int) Math.ceil(lottoList.size() / 5.0) - 1][0][j]
-					.setIcon(new ImageIcon(getColorNumber(currentLotto.get(j) - 1)));
-		}
 
 	}
 
@@ -55,7 +65,7 @@ public class HistoryFrame extends JFrame {
 	public void setCurrentBonus(Integer currentBonus) {
 		this.currentBonus = currentBonus;
 		bonus.add(currentBonus);
-		bonusBall[(int) Math.ceil(lottoList.size() / 5.0) - 1][0].setIcon(new ImageIcon(getColorNumber(this.currentBonus)));
+
 	}
 
 	public HistoryFrame() {
@@ -72,36 +82,8 @@ public class HistoryFrame extends JFrame {
 
 		lottoList.add(currentLotto);
 		bonus.add(currentBonus);
-//		System.out.println(lottoList);
 
-		int index = (int) Math.ceil(lottoList.size() / 5.0);
-//		System.out.println(index);
-
-		basicBall = new JCheckBox[index][5][6];
-		bonusBall = new JCheckBox[index][5];
-		basicBallPnl = new JPanel[index][5];
-		textLbl = new JLabel[index][5];
-		plusLbl = new JLabel[index][5];
-
-		CardLayout card = new CardLayout();
-		JPanel[] cardPnl = new JPanel[index];
-
-		JPanel wrapPnl = new JPanel();
-
-		wrapPnl.setLayout(null);
-		wrapPnl.setBackground(Color.white);
-		getContentPane().add(wrapPnl);
-
-		JPanel subPnl = new JPanel(card);
-		subPnl.setBounds(12, 72, 470, 490);
-
-		for (int i = 0; i < cardPnl.length; i++) {
-			cardPnl[i] = new JPanel();
-			BoxLayout box = new BoxLayout(cardPnl[i], BoxLayout.Y_AXIS);
-			cardPnl[i].setLayout(box);
-			cardPnl[i].setBounds(12, 72, 470, 490);
-			subPnl.add(cardPnl[i], String.valueOf((int) ('A' + i)));
-		}
+		repaintHistoryFrame();
 
 		JLabel mainlbl = new JLabel("역대 당첨 번호");
 		mainlbl.setBounds(0, 0, 494, 62);
@@ -112,44 +94,6 @@ public class HistoryFrame extends JFrame {
 		mainlbl.setOpaque(true);
 		wrapPnl.add(mainlbl);
 		wrapPnl.add(subPnl);
-
-		for (int i = 0; i < index; i++) {
-			for (int j = 0; j < 5; j++) {
-				if (i * 5 + j == lottoList.size()) {
-					break;
-				}
-				basicBallPnl[i][j] = new JPanel();
-
-				textLbl[i][j] = new JLabel("제 " + String.format("%02d", (i * 5 + j + 1)) + "회 ");
-				textLbl[i][j].setFont(new Font("휴먼둥근헤드라인", Font.PLAIN, 13));
-				basicBallPnl[i][j].add(textLbl[i][j]);
-
-				for (int k = 0; k < 6; k++) {
-					basicBall[i][j][k] = new JCheckBox();
-					if (lottoList.get(i * 5 + j).size() == 0) {
-						basicBall[i][j][k].setIcon(defaultBall);
-					} else {
-						basicBall[i][j][k].setIcon(new ImageIcon(getColorNumber(lottoList.get(i * 5 + j).get(k))));
-					}
-					basicBallPnl[i][j].add(basicBall[i][j][k]);
-				}
-
-				plusLbl[i][j] = new JLabel("+");
-				plusLbl[i][j].setFont(new Font("휴먼둥근헤드라인", Font.PLAIN, 17));
-				basicBallPnl[i][j].add(plusLbl[i][j]);
-
-				bonusBall[i][j] = new JCheckBox();
-				if (lottoList.get(i * 5 + j).size() == 0) {
-					bonusBall[i][j].setIcon(defaultBall);
-				} else {
-					bonusBall[i][j].setIcon(new ImageIcon(getColorNumber(bonus.get(j + i * 5))));
-				}
-				basicBallPnl[i][j].add(bonusBall[i][j]);
-				cardPnl[i].add(basicBallPnl[i][j]);
-			}
-		}
-
-		card.show(subPnl, "A");
 
 		JButton nextBtn = new JButton(">>");
 		nextBtn.setFont(new Font("한컴 고딕", Font.BOLD, 13));
@@ -180,6 +124,139 @@ public class HistoryFrame extends JFrame {
 
 	}
 
+	public void repaintHistoryFrame() {
+		int index = (int) Math.ceil(lottoList.size() / 5.0);
+		if (paintCount == 0) {
+			basicBall = new JCheckBox[index][5][6];
+			bonusBall = new JCheckBox[index][5];
+			basicBallPnl = new JPanel[index][5];
+			textLbl = new JLabel[index][5];
+			plusLbl = new JLabel[index][5];
+
+			card = new CardLayout();
+			cardPnls = new JPanel[index];
+
+			wrapPnl = new JPanel();
+
+			wrapPnl.setLayout(null);
+			wrapPnl.setBackground(Color.white);
+			getContentPane().add(wrapPnl);
+
+			subPnl = new JPanel(card);
+			subPnl.setBounds(12, 72, 470, 490);
+
+			for (int i = 0; i < cardPnls.length; i++) {
+				cardPnls[i] = new JPanel();
+				BoxLayout box = new BoxLayout(cardPnls[i], BoxLayout.Y_AXIS);
+				cardPnls[i].setLayout(box);
+				cardPnls[i].setBounds(12, 72, 470, 490);
+				subPnl.add(cardPnls[i], String.valueOf((int) ('A' + i)));
+			}
+
+			for (int i = 0; i < index; i++) {
+				for (int j = 0; j < 5; j++) {
+					if (i * 5 + j == lottoList.size()) {
+						break;
+					}
+					basicBallPnl[i][j] = new JPanel();
+
+					textLbl[i][j] = new JLabel("제 " + String.format("%02d", (i * 5 + j + 1)) + "회 ");
+					textLbl[i][j].setFont(new Font("휴먼둥근헤드라인", Font.PLAIN, 13));
+					basicBallPnl[i][j].add(textLbl[i][j]);
+
+					for (int k = 0; k < 6; k++) {
+						basicBall[i][j][k] = new JCheckBox();
+						if (lottoList.get(i * 5 + j).size() == 0) {
+							basicBall[i][j][k].setIcon(defaultBall);
+							currentIndex = j;
+						} else {
+							basicBall[i][j][k].setIcon(new ImageIcon(getColorNumber(lottoList.get(i * 5 + j).get(k))));
+						}
+						basicBallPnl[i][j].add(basicBall[i][j][k]);
+					}
+
+					plusLbl[i][j] = new JLabel("+");
+					plusLbl[i][j].setFont(new Font("휴먼둥근헤드라인", Font.PLAIN, 17));
+					basicBallPnl[i][j].add(plusLbl[i][j]);
+
+					bonusBall[i][j] = new JCheckBox();
+					if (lottoList.get(i * 5 + j).size() == 0) {
+						bonusBall[i][j].setIcon(defaultBall);
+					} else {
+						bonusBall[i][j].setIcon(new ImageIcon(getColorNumber(bonus.get(j + i * 5))));
+					}
+					basicBallPnl[i][j].add(bonusBall[i][j]);
+					cardPnls[i].add(basicBallPnl[i][j]);
+				}
+			}
+
+			card.show(subPnl, "A");
+			paintCount++;
+		} else {
+			if (currentLotto.size() == 0) {
+
+			} else {
+				if (lottoList.size() % 5 == 1) {
+					for (int j = 0; j < 6; j++) {
+						basicBall[index - 2][currentIndex][j]
+								.setIcon(new ImageIcon(getColorNumber(currentLotto.get(j))));
+					}
+
+					bonusBall[index - 2][currentIndex].setIcon(new ImageIcon(getColorNumber(this.currentBonus)));
+				} else {
+					for (int j = 0; j < 6; j++) {
+						basicBall[index - 1][currentIndex][j]
+								.setIcon(new ImageIcon(getColorNumber(currentLotto.get(j))));
+					}
+
+					bonusBall[index - 1][currentIndex].setIcon(new ImageIcon(getColorNumber(this.currentBonus)));
+				}
+
+				if (currentIndex == 4) {
+					cardPnls = Arrays.copyOf(cardPnls, cardPnls.length + 1);
+					basicBallPnl = Arrays.copyOf(basicBallPnl, basicBallPnl.length + 1);
+					basicBall = Arrays.copyOf(basicBall, basicBall.length + 1);
+					textLbl = Arrays.copyOf(textLbl, textLbl.length + 1);
+					plusLbl = Arrays.copyOf(plusLbl, plusLbl.length + 1);
+					bonusBall = Arrays.copyOf(bonusBall, bonusBall.length + 1);
+
+					cardPnls[index - 1] = new JPanel();
+					BoxLayout box = new BoxLayout(cardPnls[index - 1], BoxLayout.Y_AXIS);
+					cardPnls[index - 1].setLayout(box);
+					cardPnls[index - 1].setBounds(12, 72, 470, 490);
+					subPnl.add(cardPnls[index - 1], String.valueOf((int) ('A' + (index - 1))));
+					System.out.println(basicBallPnl[index - 1][0]);
+					currentIndex = 0;
+				} else {
+					currentIndex++;
+				}
+
+				basicBallPnl[index - 1][currentIndex] = new JPanel();
+				textLbl[index - 1][currentIndex] = new JLabel("제 " + String.format("%02d", lottoList.size()) + "회 ");
+				textLbl[index - 1][currentIndex].setFont(new Font("휴먼둥근헤드라인", Font.PLAIN, 13));
+				basicBallPnl[index - 1][currentIndex].add(textLbl[index - 1][currentIndex]);
+
+				for (int j = 0; j < 6; j++) {
+					basicBall[index - 1][currentIndex][j] = new JCheckBox();
+					basicBall[index - 1][currentIndex][j].setIcon(defaultBall);
+					basicBallPnl[index - 1][currentIndex].add(basicBall[index - 1][currentIndex][j]);
+				}
+
+				plusLbl[index - 1][currentIndex] = new JLabel("+");
+				plusLbl[index - 1][currentIndex].setFont(new Font("휴먼둥근헤드라인", Font.PLAIN, 17));
+				basicBallPnl[index - 1][currentIndex].add(plusLbl[index - 1][currentIndex]);
+
+				bonusBall[index - 1][currentIndex] = new JCheckBox();
+
+				bonusBall[index - 1][currentIndex].setIcon(defaultBall);
+
+				basicBallPnl[index - 1][currentIndex].add(bonusBall[index - 1][currentIndex]);
+				cardPnls[index - 1].add(basicBallPnl[index - 1][currentIndex]);
+			}
+			card.show(subPnl, "A");
+		}
+	}
+
 	public List<Integer> lotto() {
 		Set<Integer> set = new HashSet<>();
 		random = new Random();
@@ -203,12 +280,12 @@ public class HistoryFrame extends JFrame {
 	}
 
 	public URL getBlackNumber(int i) {
-		URL url = HistoryFrame.class.getClassLoader().getResource("resources/NumberBlack/" + (i) + ".png");
+		URL url = HistoryFrame.class.getClassLoader().getResource("NumberBlack/" + (i) + ".png");
 		return url;
 	}
 
 	public URL getColorNumber(int i) {
-		URL url = HistoryFrame.class.getClassLoader().getResource("resources/NumberColor/" + (i) + ".png");
+		URL url = HistoryFrame.class.getClassLoader().getResource("NumberColor/" + (i) + ".png");
 		return url;
 	}
 }
