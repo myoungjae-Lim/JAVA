@@ -423,6 +423,8 @@ public class BuyFrame extends JFrame implements ActionListener {
 						pasteBtn[lottoList.size()].setVisible(true);
 					}
 				}
+				ballAllUnSelected();
+				leftCheckBtn.setEnabled(false);
 			}
 		};
 
@@ -451,6 +453,8 @@ public class BuyFrame extends JFrame implements ActionListener {
 						copyBtnReset();
 					}
 				}
+				ballAllSelected();
+				leftCheckBtn.setEnabled(true);
 			}
 		};
 
@@ -463,6 +467,11 @@ public class BuyFrame extends JFrame implements ActionListener {
 		rightBuyBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (lottoList.size() > 0 && lottoList.size() <= 6) {
+					JOptionPane.showMessageDialog(BuyFrame.this, "구매완료! 당첨확인 바랍니다");
+				} else {
+					JOptionPane.showMessageDialog(BuyFrame.this, "로또를 구매하세요!");
+				}
 				consumer.setLottoList(lottoList);
 				lottoList.removeAll(lottoList);
 //				----------------------------------------------------------------------------------
